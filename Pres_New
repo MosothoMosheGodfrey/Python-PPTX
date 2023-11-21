@@ -1,0 +1,77 @@
+ 
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.enum.text import PP_ALIGN
+from pptx.dml.color import RGBColor
+
+def create_presentation(output_path):
+    # Create a new presentation
+    presentation = Presentation()
+
+    # Slide 1: Title Slide
+    title_slide_layout = presentation.slide_layouts[0]  # 0 represents the title slide layout
+    title_slide = presentation.slides.add_slide(title_slide_layout)
+
+    title = title_slide.shapes.title
+    subtitle = title_slide.placeholders[1]
+
+    title.text = "Python Presentation"
+    subtitle.text = "  introduction  "
+
+    # Slide 2: Content Slide with Bullet Points
+    content_slide_layout = presentation.slide_layouts[1]  # 1 represents the content slide layout
+    content_slide = presentation.slides.add_slide(content_slide_layout)
+
+    title = content_slide.shapes.title
+    title.text = "Slide 2: Bullet Points"
+
+    # Add bullet points
+    bullet_points = ["Point 1", "Point 2", "Point 3"]
+    left = Inches(1)
+    top = Inches(1.5)
+
+    for point in bullet_points:
+        text_box = content_slide.shapes.add_textbox(left, top, Inches(6), Inches(0.5))
+        text_frame = text_box.text_frame
+        p = text_frame.add_paragraph()
+        p.text = point
+        p.font.size = Pt(20)
+        p.font.color.rgb = RGBColor(0, 0, 0)  # Black text color
+
+        top += Inches(0.5)
+
+    # Slide 3: Content Slide with an Image
+    image_slide_layout = presentation.slide_layouts[5]  # 5 represents the blank slide layout
+    image_slide = presentation.slides.add_slide(image_slide_layout)
+
+    title = image_slide.shapes.title
+    title.text = "Slide 3: Image Slide"
+
+    # Add an image to the slide
+    image_path =  "/home/godfrey/Documents/Python-PPTX/tree_image.jpg"
+    set_background_image(image_slide, image_path, presentation)
+
+    # Save the presentation
+    presentation.save(output_path)
+
+def set_background_image(slide, image_path, presentation):
+    img = Image.open(image_path)
+
+    # Get slide dimensions from the presentation object
+    slide_width = presentation.slide_width
+    slide_height = presentation.slide_height
+
+    # Resize the image to fit the slide dimensions
+    img = img.resize((slide_width, slide_height))
+
+    # Create a picture shape and add the image to it
+    pic = slide.shapes.add_picture(image_path, 0, 0, width=slide_width, height=slide_height)
+
+if __name__ == "__main__":
+    # Specify the output file path for the presentation
+    output_file = "/home/godfrey/Documents/Python-PPTX/cover_page.pptx"
+
+    # Create the presentation
+    create_presentation(output_file)
+
+    print(f"Presentation saved at: {output_file}")
